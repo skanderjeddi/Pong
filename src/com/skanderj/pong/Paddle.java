@@ -5,13 +5,13 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 
 public class Paddle {
-	private final int x, width, height;
-	private int y;
-	private double velocity;
-	private Color color;
+	protected final int x, width, height;
+	protected int y;
+	protected double velocity;
+	protected Color color;
 
 	// Collisions
-	private Rectangle boundingBox;
+	protected Rectangle boundingBox;
 
 	public Paddle(int x, int y, int width, int height, Color color) {
 		this.x = x;
@@ -25,12 +25,22 @@ public class Paddle {
 
 	public void update() {
 		this.y += this.velocity;
+		if (this.y < 0) {
+			this.y = 0;
+		}
+		if (this.height + this.y > Pong.HEIGHT) {
+			this.y = Pong.HEIGHT - this.height;
+		}
 		this.boundingBox.setBounds(this.x, this.y, this.width, this.height);
 	}
 
 	public void render(Graphics graphics) {
 		graphics.setColor(this.color);
 		graphics.fillRect(this.x, this.y, this.width, this.height);
+		if (Pong.DEBUG) {
+			graphics.setColor(Color.RED);
+			graphics.drawRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+		}
 	}
 
 	public int getX() {
