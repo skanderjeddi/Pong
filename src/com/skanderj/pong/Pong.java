@@ -21,7 +21,8 @@ public class Pong extends Game {
 	public static final boolean DEBUG = false;
 
 	public static final int OG = 0, WIDTH = 1100, HEIGHT = 900;
-	public static final int PADDLE_WIDTH = 12, PADDLE_HEIGHT = 60, BALL_RADIUS = 10;
+	public static final int PADDLE_WIDTH = 12, PADDLE_HEIGHT = 60, BALL_RADIUS = 10, PADDLE_ORIGIN_X = 10, PADDLE_ORIGIN_Y = 10;
+	public static final double PADDLE_VELOCITY = 0.2;
 
 	private final Window window;
 	private final Keyboard keyboard;
@@ -38,8 +39,8 @@ public class Pong extends Game {
 		this.window = new Window(this, Pong.IDENTIFIER, Pong.WIDTH, Pong.HEIGHT);
 		this.keyboard = new Keyboard();
 		this.mouse = new Mouse();
-		this.leftPaddle = new Paddle(10, 10, Pong.PADDLE_WIDTH, Pong.PADDLE_HEIGHT, Color.WHITE);
-		this.rightPaddle = new Paddle(Pong.WIDTH - Pong.PADDLE_WIDTH - 10, Pong.HEIGHT - Pong.PADDLE_HEIGHT - 10, Pong.PADDLE_WIDTH, Pong.PADDLE_HEIGHT, Color.WHITE);
+		this.leftPaddle = new Paddle(this, Pong.PADDLE_ORIGIN_X, Pong.PADDLE_ORIGIN_Y, Pong.PADDLE_WIDTH, Pong.PADDLE_HEIGHT, Color.WHITE, false);
+		this.rightPaddle = new Paddle(this, Pong.WIDTH - Pong.PADDLE_WIDTH - Pong.PADDLE_ORIGIN_X, Pong.HEIGHT - Pong.PADDLE_HEIGHT - Pong.PADDLE_ORIGIN_Y, Pong.PADDLE_WIDTH, Pong.PADDLE_HEIGHT, Color.WHITE, true);
 		this.ball = new Ball(this, (Pong.WIDTH / 2) - (Pong.BALL_RADIUS / 2), (Pong.HEIGHT / 2) - (Pong.BALL_RADIUS / 2), Pong.BALL_RADIUS, Color.WHITE);
 		this.leftScore = this.rightScore = 0;
 		this.useAI = true;
@@ -72,26 +73,24 @@ public class Pong extends Game {
 			boolean zPressed = this.keyboard.isKeyDown(KeyEvent.VK_Z);
 			boolean sPressed = this.keyboard.isKeyDown(KeyEvent.VK_S);
 			if (zPressed && !sPressed) {
-				this.leftPaddle.setVelocity(this.leftPaddle.getVelocity() - 0.2);
+				this.leftPaddle.setVelocity(this.leftPaddle.getVelocity() - Pong.PADDLE_VELOCITY);
 			} else if (sPressed && !zPressed) {
-				this.leftPaddle.setVelocity(this.leftPaddle.getVelocity() + 0.2);
+				this.leftPaddle.setVelocity(this.leftPaddle.getVelocity() + Pong.PADDLE_VELOCITY);
 			} else {
 				this.leftPaddle.setVelocity(0.0);
 			}
 			// Right paddle
-			boolean upPressed = this.keyboard.isKeyDown(KeyEvent.VK_UP);
-			boolean downPressed = this.keyboard.isKeyDown(KeyEvent.VK_DOWN);
-			if (upPressed && !downPressed) {
-				this.rightPaddle.setVelocity(this.rightPaddle.getVelocity() - 0.2);
-			} else if (downPressed && !upPressed) {
-				this.rightPaddle.setVelocity(this.rightPaddle.getVelocity() + 0.2);
-			} else {
-				this.rightPaddle.setVelocity(0.0);
+			if (!this.rightPaddle.aiControlled) {
+				boolean upPressed = this.keyboard.isKeyDown(KeyEvent.VK_UP);
+				boolean downPressed = this.keyboard.isKeyDown(KeyEvent.VK_DOWN);
+				if (upPressed && !downPressed) {
+					this.rightPaddle.setVelocity(this.rightPaddle.getVelocity() - Pong.PADDLE_VELOCITY);
+				} else if (downPressed && !upPressed) {
+					this.rightPaddle.setVelocity(this.rightPaddle.getVelocity() + Pong.PADDLE_VELOCITY);
+				} else {
+					this.rightPaddle.setVelocity(0.0);
+				}
 			}
-		}
-		if (this.useAI) {
-			// this.rightPaddle.velocity = Math.abs(this.ball.horizontalVelocity) /
-			// this.ball.verticalVelocity;
 		}
 		this.leftPaddle.update();
 		this.rightPaddle.update();
@@ -109,9 +108,9 @@ public class Pong extends Game {
 			graphics.fillRect(Pong.OG, Pong.OG, Pong.WIDTH, Pong.HEIGHT);
 			this.increaseRenderQuality(graphics);
 			// Center line
-			for (int y = ((Pong.HEIGHT / 10) - (Pong.HEIGHT / 12)) / 2; y < Pong.HEIGHT; y += Pong.HEIGHT / 10) {
+			for (int y = ((Pong.HEIGHT / 20) - (Pong.HEIGHT / 22)) / 2; y < Pong.HEIGHT; y += Pong.HEIGHT / 20) {
 				graphics.setColor(Color.WHITE);
-				graphics.fillRect((Pong.WIDTH / 2) - 4, y, 8, Pong.HEIGHT / 12);
+				graphics.fillRect((Pong.WIDTH / 2) - 2, y, 4, Pong.HEIGHT / 22);
 			}
 			// TODO draw
 			this.leftPaddle.render(graphics);

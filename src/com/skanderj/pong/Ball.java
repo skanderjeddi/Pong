@@ -77,14 +77,14 @@ public class Ball {
 		int verticalDirection = random.nextInt(2);
 		int horizontalDirection = random.nextInt(2);
 		if (verticalDirection == 0) {
-			this.verticalVelocity = 3;
+			this.verticalVelocity = 5;
 		} else {
-			this.verticalVelocity = -3;
+			this.verticalVelocity = -5;
 		}
 		if (horizontalDirection == 0) {
-			this.horizontalVelocity = 3;
+			this.horizontalVelocity = 5;
 		} else {
-			this.horizontalVelocity = -3;
+			this.horizontalVelocity = -5;
 		}
 	}
 
