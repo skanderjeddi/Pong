@@ -28,7 +28,7 @@ public class Paddle {
 		if (this.y < 0) {
 			this.y = 0;
 		}
-		if (this.height + this.y > Pong.HEIGHT) {
+		if ((this.height + this.y) > Pong.HEIGHT) {
 			this.y = Pong.HEIGHT - this.height;
 		}
 		this.boundingBox.setBounds(this.x, this.y, this.width, this.height);

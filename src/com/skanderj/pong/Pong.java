@@ -1,6 +1,8 @@
 package com.skanderj.pong;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -16,7 +18,7 @@ import com.skanderj.gingerbread.input.Mouse;
 public class Pong extends Game {
 	public static final String IDENTIFIER = "Pong";
 	public static final double RATE = 60.0D;
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	public static final int OG = 0, WIDTH = 800, HEIGHT = 600;
 	public static final int PADDLE_WIDTH = 12, PADDLE_HEIGHT = 60, BALL_RADIUS = 10;
@@ -28,6 +30,9 @@ public class Pong extends Game {
 	protected final Paddle leftPaddle, rightPaddle;
 	protected final Ball ball;
 
+	protected int leftScore, rightScore;
+	protected boolean useAI;
+
 	public Pong() {
 		super(Pong.IDENTIFIER, Pong.RATE);
 		this.window = new Window(this, Pong.IDENTIFIER, Pong.WIDTH, Pong.HEIGHT);
@@ -36,12 +41,13 @@ public class Pong extends Game {
 		this.leftPaddle = new Paddle(10, 10, Pong.PADDLE_WIDTH, Pong.PADDLE_HEIGHT, Color.WHITE);
 		this.rightPaddle = new Paddle(Pong.WIDTH - Pong.PADDLE_WIDTH - 10, Pong.HEIGHT - Pong.PADDLE_HEIGHT - 10, Pong.PADDLE_WIDTH, Pong.PADDLE_HEIGHT, Color.WHITE);
 		this.ball = new Ball(this, (Pong.WIDTH / 2) - (Pong.BALL_RADIUS / 2), (Pong.HEIGHT / 2) - (Pong.BALL_RADIUS / 2), Pong.BALL_RADIUS, Color.WHITE);
+		this.leftScore = this.rightScore = 0;
+		this.useAI = true;
 	}
 
 	@Override
 	protected void create() {
-		this.ball.setVerticalVelocity(2);
-		this.ball.setHorizontalVelocity(2);
+		this.ball.randomLaunch();
 		this.window.registerKeyboard(this.keyboard);
 		this.window.registerMouse(this.mouse);
 		this.window.show();
@@ -83,6 +89,10 @@ public class Pong extends Game {
 				this.rightPaddle.setVelocity(0.0);
 			}
 		}
+		if (this.useAI) {
+			// this.rightPaddle.velocity = Math.abs(this.ball.horizontalVelocity) /
+			// this.ball.verticalVelocity;
+		}
 		this.leftPaddle.update();
 		this.rightPaddle.update();
 		this.ball.update();
@@ -99,12 +109,16 @@ public class Pong extends Game {
 			graphics.fillRect(Pong.OG, Pong.OG, Pong.WIDTH, Pong.HEIGHT);
 			this.increaseRenderQuality(graphics);
 			// Center line
-			graphics.setColor(Color.RED);
-			graphics.drawLine(Pong.WIDTH / 2, 0, Pong.WIDTH / 2, Pong.HEIGHT);
+			for (int y = 5; y < Pong.HEIGHT; y += Pong.HEIGHT / 10) {
+				graphics.setColor(Color.WHITE);
+				graphics.fillRect((Pong.WIDTH / 2) - 4, y, 8, Pong.HEIGHT / 12);
+			}
 			// TODO draw
 			this.leftPaddle.render(graphics);
 			this.rightPaddle.render(graphics);
 			this.ball.render(graphics);
+			this.drawCenteredString(graphics, 0, 10, Pong.WIDTH / 2, 30, String.valueOf(this.leftScore), new Font("Impact", Font.PLAIN, 24), Color.WHITE, 2, 2, Color.DARK_GRAY);
+			this.drawCenteredString(graphics, Pong.WIDTH / 2, 10, Pong.WIDTH / 2, 30, String.valueOf(this.rightScore), new Font("Impact", Font.PLAIN, 24), Color.WHITE, 2, 2, Color.DARK_GRAY);
 		}
 		graphics.dispose();
 		bufferStrategy.show();
@@ -116,6 +130,25 @@ public class Pong extends Game {
 		graphics2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 		graphics2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		graphics2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+	}
+
+	public void drawString(Graphics graphics, int x, int y, String text, Font font, Color color, int shadowx, int shadowy, Color shadowColor) {
+		graphics.setFont(font);
+		graphics.setColor(shadowColor);
+		graphics.drawString(text, x + shadowx, y + shadowy);
+		graphics.setColor(color);
+		graphics.drawString(text, x, y);
+	}
+
+	public void drawCenteredString(Graphics graphics, int xo, int yo, int width, int height, String text, Font font, Color color, int shadowx, int shadowy, Color shadowColor) {
+		graphics.setFont(font);
+		FontMetrics fontMetrics = graphics.getFontMetrics();
+		int x = ((width - fontMetrics.stringWidth(text)) / 2) + xo;
+		int y = fontMetrics.getAscent() + ((height - (fontMetrics.getAscent() + fontMetrics.getDescent())) / 2) + yo;
+		graphics.setColor(shadowColor);
+		graphics.drawString(text, x + shadowx, y + shadowy);
+		graphics.setColor(color);
+		graphics.drawString(text, x, y);
 	}
 
 	public Window getWindow() {
