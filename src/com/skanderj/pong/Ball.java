@@ -54,7 +54,6 @@ public class Ball {
 		this.x += (int) this.horizontalVelocity;
 		this.y += (int) this.verticalVelocity;
 		this.boundingBox.setBounds(this.x, this.y, this.radius, this.radius);
-		System.out.println("x: " + this.x + ", y: " + this.y + ", dx: " + this.horizontalVelocity + ", dy: " + this.verticalVelocity);
 	}
 
 	public void render(Graphics graphics) {

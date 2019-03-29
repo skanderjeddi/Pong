@@ -20,7 +20,7 @@ public class Pong extends Game {
 	public static final double RATE = 60.0D;
 	public static final boolean DEBUG = false;
 
-	public static final int OG = 0, WIDTH = 800, HEIGHT = 600;
+	public static final int OG = 0, WIDTH = 1100, HEIGHT = 900;
 	public static final int PADDLE_WIDTH = 12, PADDLE_HEIGHT = 60, BALL_RADIUS = 10;
 
 	private final Window window;
@@ -109,7 +109,7 @@ public class Pong extends Game {
 			graphics.fillRect(Pong.OG, Pong.OG, Pong.WIDTH, Pong.HEIGHT);
 			this.increaseRenderQuality(graphics);
 			// Center line
-			for (int y = 5; y < Pong.HEIGHT; y += Pong.HEIGHT / 10) {
+			for (int y = ((Pong.HEIGHT / 10) - (Pong.HEIGHT / 12)) / 2; y < Pong.HEIGHT; y += Pong.HEIGHT / 10) {
 				graphics.setColor(Color.WHITE);
 				graphics.fillRect((Pong.WIDTH / 2) - 4, y, 8, Pong.HEIGHT / 12);
 			}
