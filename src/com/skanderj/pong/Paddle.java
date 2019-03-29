@@ -36,7 +36,7 @@ public class Paddle {
 
 	public void render(Graphics graphics) {
 		graphics.setColor(this.color);
-		graphics.fillRect(this.x, this.y, this.width, this.height);
+		graphics.fillRoundRect(this.x, this.y, this.width, this.height, 8, 8);
 		if (Pong.DEBUG) {
 			graphics.setColor(Color.RED);
 			graphics.drawRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
